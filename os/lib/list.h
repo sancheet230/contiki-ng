@@ -92,7 +92,7 @@
          static list_t name = (list_t)&LIST_CONCAT(name,_list)
 
 /**
- * Declare a linked list inside a structure declaraction.
+ * Declare a linked list inside a structure declaration.
  *
  * This macro declares a linked list with the specified \c type. The
  * type \b must be a structure (\c struct) with its first element
@@ -133,17 +133,25 @@
 /**
  * The linked list type.
  */
-typedef void ** list_t;
+typedef struct int_node * list_t;
 
 /**
  * The non-modifiable linked list type.
  */
-typedef void *const *const_list_t;
+typedef const struct int_node * const_list_t;
+
+/*---------------------------------------------------------------------------*/
+/* Define the struct for storing integer data in the list */
+struct int_node {
+  int value;
+  struct int_node *next;
+};
+/*---------------------------------------------------------------------------*/
 
 /**
  * Initialize a list.
  *
- * This function initalizes a list. The list will be empty after this
+ * This function initializes a list. The list will be empty after this
  * function has been called.
  *
  * \param list The list to be initialized.
@@ -157,8 +165,8 @@ list_init(list_t list)
 /**
  * Get a pointer to the first element of a list.
  *
- * This function returns a pointer to the first element of the
- * list. The element will \b not be removed from the list.
+ * This function returns a pointer to the first element of the list.
+ * The element will \b not be removed from the list.
  *
  * \param list The list.
  * \return A pointer to the first element on the list.
@@ -264,50 +272,18 @@ list_copy(list_t dest, const_list_t src)
 }
 
 /**
- * \brief      Insert an item after a specified item on the list
+ * Insert an item after a specified item on the list.
  * \param list The list
  * \param previtem The item after which the new item should be inserted
  * \param newitem  The new item that is to be inserted
- * \author     Adam Dunkels
- *
- *             This function inserts an item right after a specified
- *             item on the list. This function is useful when using
- *             the list module to ordered lists.
- *
- *             If previtem is NULL, the new item is placed at the
- *             start of the list.
- *
  */
 void   list_insert(list_t list, void *previtem, void *newitem);
 
 /**
- * \brief      Get the next item following this item
- * \param item A list item
- * \returns    A next item on the list
- *
- *             This function takes a list item and returns the next
- *             item on the list, or NULL if there are no more items on
- *             the list. This function is used when iterating through
- *             lists.
- */
-static inline void *
-list_item_next(const void *item)
-{
-  struct list {
-    struct list *next;
-  };
-  return item == NULL ? NULL : ((struct list *)item)->next;
-}
-
-/**
- * \brief      Check if the list contains an item
+ * Check if the list contains an item.
  * \param list The list that is checked
  * \param item An item to look for in the list
- * \returns    0 if the list does not contains the item, and 1 otherwise
- *
- *             This function searches for an item in the list and returns
- *         0 if the list does not contain the item, and 1 if the item
- *         is present in the list.
+ * \returns 0 if the list does not contains the item, and 1 otherwise
  */
 bool list_contains(const_list_t list, const void *item);
 
