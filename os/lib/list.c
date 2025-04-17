@@ -48,69 +48,76 @@
 #include "lib/list.h"
 
 #include <string.h>
+
 /*---------------------------------------------------------------------------*/
-struct list {
-  struct list *next;
+/* Define the struct for storing integer data in the list */
+struct int_node {
+  int value;
+  struct int_node *next;
 };
 /*---------------------------------------------------------------------------*/
+
 void *
 list_tail(const_list_t list)
 {
-  struct list *l;
+  struct int_node *l;
 
   if(*list == NULL) {
     return NULL;
   }
 
-  for(l = *list; l->next != NULL; l = l->next);
+  for(l = (struct int_node *)*list; l->next != NULL; l = l->next);
 
   return l;
 }
 /*---------------------------------------------------------------------------*/
+
 void
 list_add(list_t list, void *item)
 {
-  struct list *l;
+  struct int_node *l;
 
   /* Make sure not to add the same element twice */
   list_remove(list, item);
 
-  ((struct list *)item)->next = NULL;
+  ((struct int_node *)item)->next = NULL;
 
-  l = list_tail(list);
+  l = (struct int_node *)list_tail(list);
 
   if(l == NULL) {
     *list = item;
   } else {
-    l->next = item;
+    l->next = (struct int_node *)item;
   }
 }
 /*---------------------------------------------------------------------------*/
+
 void
 list_push(list_t list, void *item)
 {
   /* Make sure not to add the same element twice */
   list_remove(list, item);
 
-  ((struct list *)item)->next = *list;
+  ((struct int_node *)item)->next = (struct int_node *)*list;
   *list = item;
 }
 /*---------------------------------------------------------------------------*/
+
 void *
 list_chop(list_t list)
 {
-  struct list *l, *r;
+  struct int_node *l, *r;
 
   if(*list == NULL) {
     return NULL;
   }
-  if(((struct list *)*list)->next == NULL) {
-    l = *list;
+  if(((struct int_node *)*list)->next == NULL) {
+    l = (struct int_node *)*list;
     *list = NULL;
     return l;
   }
 
-  for(l = *list; l->next->next != NULL; l = l->next);
+  for(l = (struct int_node *)*list; l->next->next != NULL; l = l->next);
 
   r = l->next;
   l->next = NULL;
@@ -118,29 +125,31 @@ list_chop(list_t list)
   return r;
 }
 /*---------------------------------------------------------------------------*/
+
 void *
 list_pop(list_t list)
 {
-  struct list *l;
-  l = *list;
+  struct int_node *l;
+  l = (struct int_node *)*list;
   if(*list != NULL) {
-    *list = ((struct list *)*list)->next;
+    *list = ((struct int_node *)*list)->next;
   }
 
   return l;
 }
 /*---------------------------------------------------------------------------*/
+
 void
 list_remove(list_t list, const void *item)
 {
-  struct list *l, *r;
+  struct int_node *l, *r;
 
   if(*list == NULL) {
     return;
   }
 
   r = NULL;
-  for(l = *list; l != NULL; l = l->next) {
+  for(l = (struct int_node *)*list; l != NULL; l = l->next) {
     if(l == item) {
       if(r == NULL) {
         /* First on list */
@@ -156,19 +165,21 @@ list_remove(list_t list, const void *item)
   }
 }
 /*---------------------------------------------------------------------------*/
+
 int
 list_length(const_list_t list)
 {
-  struct list *l;
+  struct int_node *l;
   int n = 0;
 
-  for(l = *list; l != NULL; l = l->next) {
+  for(l = (struct int_node *)*list; l != NULL; l = l->next) {
     ++n;
   }
 
   return n;
 }
 /*---------------------------------------------------------------------------*/
+
 void
 list_insert(list_t list, void *previtem, void *newitem)
 {
@@ -176,18 +187,19 @@ list_insert(list_t list, void *previtem, void *newitem)
     list_push(list, newitem);
   } else {
     list_remove(list, newitem);
-    ((struct list *)newitem)->next = ((struct list *)previtem)->next;
-    ((struct list *)previtem)->next = newitem;
+    ((struct int_node *)newitem)->next = ((struct int_node *)previtem)->next;
+    ((struct int_node *)previtem)->next = newitem;
   }
 }
 /*---------------------------------------------------------------------------*/
+
 bool
 list_contains(const_list_t list, const void *item)
 {
-  struct list *l;
-  for(l = *list; l != NULL; l = l->next) {
+  struct int_node *l;
+  for(l = (struct int_node *)*list; l != NULL; l = l->next) {
     if(item == l) {
-    	return true;
+      return true;
     }
   }
   return false;
